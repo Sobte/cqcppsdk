@@ -14,7 +14,9 @@ namespace cq {
         // 注意, 与 T::from_bytes 不同, 后者从二进制数据中提取对象
         template <typename T>
         static T from_base64(const std::string &b64) noexcept(false) {
-            return T::from_bytes(utils::base64_decode(b64));
+            auto result = T::from_bytes(utils::base64_decode(b64));
+            result.base64 = b64;
+            return result;
         }
 
         // 从 Base64 字符串解析数据对象集合
@@ -55,6 +57,7 @@ namespace cq {
         std::string nickname; // 昵称
         Sex sex = Sex::UNKNOWN; // 性别
         int32_t age = 0; // 年龄
+        std::string base64; // 整个 User 对象的 Base64 编码字符串
 
     private:
         const static size_t MIN_SIZE = 18;
@@ -111,6 +114,7 @@ namespace cq {
         std::string group_name; // 群名
         int32_t member_count = 0; // 成员数, 仅 get_group_info() 返回
         int32_t max_member_count = 0; // 最大成员数(容量), 仅 get_group_info() 返回
+        std::string base64; // 整个 Group 对象的 Base64 编码字符串
 
     private:
         const static size_t MIN_SIZE = 10;
@@ -213,12 +217,14 @@ namespace cq {
         }
     };
 
+    /*
     template <>
     inline Anonymous ObjectHelper::from_base64<Anonymous>(const std::string &b64) {
         auto anonymous = Anonymous::from_bytes(utils::base64_decode(b64));
         anonymous.base64 = b64;
         return anonymous;
     }
+    */
 
     // 文件信息
     struct File {
@@ -226,6 +232,7 @@ namespace cq {
         std::string name; // 名称
         int64_t size = 0; // 大小(字节)
         int64_t busid = 0; // 某种 ID, 具体含义不明
+        std::string base64; // 整个 File 对象的 Base64 编码字符串
 
     private:
         const static size_t MIN_SIZE = 20;
